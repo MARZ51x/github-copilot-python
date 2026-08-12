@@ -116,9 +116,21 @@ async function checkSolution(){
     if(incorrect.has(i)) c.classList.add('cell-invalid'); else if(c.value) c.classList.add('cell-valid');
   }
   if(incorrect.size===0){
-    stopTimer(); msg.innerText = `Congratulations! ${formatTime(secondsElapsed)} Hints:${hintsUsed}`;
-    await saveScorePrompt(secondsElapsed);
-  } else { msg.innerText = 'Some cells are incorrect.'; }
+    stopTimer();
+    showWinPopup(`You completed the board in ${formatTime(secondsElapsed)} with ${hintsUsed} hint(s)!`);
+  } else {
+    msg.innerText = 'Some cells are incorrect.';
+  }
+}
+
+function showWinPopup(message){
+  document.getElementById('message').innerText = '';
+  document.getElementById('win-popup-message').innerText = message;
+  document.getElementById('win-popup').classList.remove('hidden');
+}
+
+function closeWinPopup(){
+  document.getElementById('win-popup').classList.add('hidden');
 }
 
 async function saveScorePrompt(timeSeconds){
@@ -228,5 +240,10 @@ window.addEventListener('load', ()=>{
   document.getElementById('check-solution').addEventListener('click', checkSolution);
   document.getElementById('hint').addEventListener('click', hint);
   document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+  document.getElementById('save-score').addEventListener('click', async ()=>{
+    await saveScorePrompt(secondsElapsed);
+    closeWinPopup();
+  });
+  document.getElementById('close-popup').addEventListener('click', closeWinPopup);
   loadTheme(); renderLeaderboard(); newGame();
 });
